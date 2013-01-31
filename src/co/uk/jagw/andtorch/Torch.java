@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.millennialmedia.android.MMAdViewSDK;
 import com.mopub.mobileads.MoPubView;
@@ -20,8 +22,14 @@ public class Torch extends Activity {
 	private int flashFlag = 0;
 	private int stickFlash = 0;
 	private Parameters params;
+	private RelativeLayout backgroundView;
+	private List<String> plist;
+	private boolean hasFlash;
+	
+	// TODO: BACKGROUND COLOUR FOR NO FLASH.
+	private int bgColor = 0;
 
-	// MoPub
+	// ADVERTISING MoPub - create a private
 	private MoPubView mAdView;
 	
 	
@@ -30,11 +38,25 @@ public class Torch extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_torch);
 		
+		// ADVERTISING
 		// MoPub Code
 		  mAdView = (MoPubView) findViewById(R.id.adview);
-		  mAdView.setAdUnitId("aa8476646a2a11e281c11231392559e4"); // Enter your Ad Unit ID from www.mopub.com
+		  mAdView.setAdUnitId("aa8476646a2a11e281c11231392559e4");
 		  mAdView.loadAd();
+		// Set the Millennial SDK to LOG_LEVEL_VERBOSE  
 		  MMAdViewSDK.logLevel = MMAdViewSDK.LOG_LEVEL_VERBOSE;
+		
+		// Determine whether the phone has a camera with an LED
+		  camera = Camera.open();
+		  params = camera.getParameters();
+		  
+		  
+		  // TODO: SORT THIS OUT
+		  if(checkIfFlash(params) == true){
+			  hasFlash = true;
+		  } 
+		  
+		  
 	}
 
 	@Override
@@ -50,6 +72,8 @@ public class Torch extends Activity {
 		
 		if(stickFlash == 0){
 			camera.release();
+		} else if (stickFlash ==1){
+			// TODO: Warn the user that they cannot use other camera apps.
 		}
 		
 		// Call the rest of the onPause
@@ -58,34 +82,50 @@ public class Torch extends Activity {
 	
 	@Override
 	public void onResume(){
-		try{
+		
+		if(stickFlash == 0){
 			camera = Camera.open();
+		} else {
+			//Fire a reminder to the user that the torch is STILL stuck on.
+		}
 		
-		
-		
-		//Call the rest of the onResume
+		// Call the rest of the onResume method.
 		super.onResume();
-		}
-		catch(Exception e){
-			Log.d("OnResume", "Camera is killing me!");
-		}
 	}
 	
 	@Override
 	public void onDestroy(){
+		
+		// ADVERTISING - Destroy the MoPub ad unit.
 		mAdView.destroy();
+		
 		super.onDestroy();
+	}
+	
+	//
+	public boolean checkIfFlash(Parameters params){
+		 List<String> pList = params.getSupportedFlashModes();
+		 if (pList.contains(Parameters.FLASH_MODE_TORCH)){
+			 return true;
+		 } else {
+			 return false;
+		 }
 	}
 	
 	// Method to toggle to flash, logic check if flash is on.
 	public void toggleFlash(View view){
 		Log.d("toggleFlash", "Got to toggleFlash method");
 		
+		// If there's no open camera unit; let's open one!
 		if (camera == null) {
-			camera = Camera.open();
+			try{
+				camera = Camera.open();
+			} catch(Exception e){
+				// TODO: If we aren't able to open the camera, we should try and use the screen.
+			}
 		}
 		
-		// Remove the sticky toggle
+		// Remove the sticky toggle if we've hit the first button.
 		stickFlash = 0;
 		
 		if(flashFlag == 0){
@@ -109,7 +149,11 @@ public class Torch extends Activity {
 		Log.d("stickFlash", "Got to stickFlash method");
 		
 		if (camera == null) {
-			camera = Camera.open();
+			try{
+				camera = Camera.open();
+			} catch(Exception e){
+				// TODO: If we can't open the camera.
+			}
 		}
 		
 		
@@ -148,6 +192,14 @@ public class Torch extends Activity {
 		
 		camera.setParameters(params);
 		flashFlag = 1;
+		
+		flashScreen();
+		
+		
+		} else {
+			Log.d("FlashMode", "FLASH_MODE_TORCH not available");
+			//TODO - We should engage make a WHITE screen with maximum brightness.
+			
 		}
 	}
 	
@@ -159,6 +211,24 @@ public class Torch extends Activity {
 		
 		// Give the camera back to the OS.
 		camera.unlock();
+		
+	}
+	// Method to make the current background white and turn brightness to maximum.
+	// Turning the front screen into a flashlight instead!
+	public void flashScreen(){
+		
+		// Make phone white.
+		backgroundView = (RelativeLayout) findViewById(R.id.mainView);
+		//TODO: make another way for older phones!
+		//backgroundView.setBackground(null);
+		backgroundView.setBackgroundColor(bgColor);
+		
+		// Set brightness of current window to maximum.
+		WindowManager.LayoutParams lp = getWindow().getAttributes();
+		lp.screenBrightness = 1;
+		getWindow().setAttributes(lp);
+		
+		
 		
 	}
 
