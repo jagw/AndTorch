@@ -3,16 +3,20 @@ package co.uk.jagw.andtorch;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
-import android.view.View;
 import android.view.MotionEvent;
-import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 public class FrontFlash extends Activity{
+	
+	private LinearLayout linearLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +25,14 @@ public class FrontFlash extends Activity{
 		
 		// Check the preferences!
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);	    
-		String screenColor = sharedPref.getString("pref_screenColor", "#ffffff");
+		String screenColour = sharedPref.getString("pref_colourPicker", "#FFFFFF");
+		
+		linearLayout = (LinearLayout) findViewById(R.id.frontFlashBackground);
+		Log.d("FrontFlash", screenColour);
+		
+		linearLayout.setBackgroundColor(Color.parseColor(screenColour));
+		
+		
 		
 		// Set brightness of current window to maximum.
 		WindowManager.LayoutParams lp = getWindow().getAttributes();

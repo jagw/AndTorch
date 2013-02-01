@@ -12,9 +12,23 @@
     <string name="menu_about">About</string>
     <string name="menu_exit">Exit</string>
     <string name="settings_title">Settings</string>
-    <color name="white">#FFFFFF</color>
     <string name="menu_back">Back</string>
     <string name="about_title">About</string>
     <string name="help_title">Help</string>
+    <string name="pref_colourPicker">Select Screen Colour</string>
+    <string-array name="pref_colourArray">
+        <item >Red</item>
+        <item >Blue</item>
+        <item >Green</item>
+        <item >White</item>
+        <item >Yellow</item>
+    </string-array>
+    <string-array name="pref_colourArrayValues">
+        <item >red</item>
+        <item >blue</item>
+        <item >green</item>
+        <item >white</item>
+        <item >yellow</item>
+    </string-array>
 
 </resources>

@@ -6,6 +6,12 @@
         android:dialogTitle="@string/pref_enableFlashScreenDialog"
         android:defaultValue="false"
         />
+    <ListPreference 
+        android:title="@string/pref_colourPicker"
+        android:key="pref_colourPicker"
+        android:entries="@array/pref_colourArray"
+        android:entryValues="@array/pref_colourArrayValues"
+        />
     
 
 </PreferenceScreen>
