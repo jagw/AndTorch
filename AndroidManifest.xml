@@ -21,21 +21,44 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="co.uk.jagw.andtorch.Torch"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTask" >
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation"/>
-		<activity android:name="com.mopub.mobileads.MraidActivity" android:configChanges="keyboardHidden|orientation"/>
-		<activity android:name="com.mopub.mobileads.MraidBrowser" android:configChanges="keyboardHidden|orientation"/>
-		<activity android:name="com.millennialmedia.android.MMActivity"
-       			  android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name="com.millennialmedia.android.VideoPlayer"
-       	  		  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-       			  android:configChanges="keyboardHidden|orientation|keyboard" />
+        
+        <activity 
+            android:name="co.uk.jagw.andtorch.Help"
+            android:label="@string/help_title"/>
+        
+        <activity 
+            android:name="co.uk.jagw.andtorch.About"
+            android:label="@string/about_title"/>
+                
+        <activity 
+            android:name="co.uk.jagw.andtorch.TorchPreferences"
+            android:label="@string/settings_title"/>
+        
+        <activity
+            android:name="co.uk.jagw.andtorch.FrontFlash"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            />
+            
+            
+<!--         <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation"/> -->
+<!-- 		<activity android:name="com.mopub.mobileads.MraidActivity" android:configChanges="keyboardHidden|orientation"/> -->
+<!-- 		<activity android:name="com.mopub.mobileads.MraidBrowser" android:configChanges="keyboardHidden|orientation"/> -->
+<!-- 		<activity android:name="com.millennialmedia.android.MMActivity" -->
+<!--        			  android:theme="@android:style/Theme.Translucent.NoTitleBar" /> -->
+<!--         <activity android:name="com.millennialmedia.android.VideoPlayer" -->
+<!--        	  		  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" -->
+<!--        			  android:configChanges="keyboardHidden|orientation|keyboard" /> -->
+       			  
     </application>
 
 </manifest>

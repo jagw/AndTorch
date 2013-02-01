@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:key="pref_screenflash"
+        android:title="@string/pref_enableFlashScreen"
+        android:dialogTitle="@string/pref_enableFlashScreenDialog"
+        android:defaultValue="false"
+        />
+    
+
+</PreferenceScreen>
