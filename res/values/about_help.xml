@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">AndTorch \nDeveloped by Jagw Apps. \n\nThank you for downloading! \nAny questions, or comments, please contact jagw@jagw.co.uk</string>
+    <string name="about_emailButton">Send Email</string>
+    
+</resources>
