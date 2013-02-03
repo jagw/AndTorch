@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -60,7 +61,7 @@ public class Torch extends Activity {
 		// mAdView.loadAd();
 		// // Set the Millennial SDK to LOG_LEVEL_VERBOSE
 		// MMAdViewSDK.logLevel = MMAdViewSDK.LOG_LEVEL_VERBOSE;
-
+		
 		// Determine whether the phone has a camera with an LED
 		camera = Camera.open();
 		params = camera.getParameters();
@@ -119,6 +120,18 @@ public class Torch extends Activity {
 		super.onDestroy();
 	}
 
+	// Controls for the widget.
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if(intent.getStringExtra("methodName").equals("toggleFlash")){
+			flashOn(params);
+		}
+
+	}
+	
+	
+
 	//
 	public boolean checkIfFlash(Parameters params) {
 		if (this.getPackageManager().hasSystemFeature(
@@ -136,9 +149,12 @@ public class Torch extends Activity {
 
 		}
 	}
-
+	
 	// Method to toggle to flash, logic check if flash is on.
 	public void toggleFlash(View view) {
+		
+
+		
 		Log.d("toggleFlash", "Got to toggleFlash method");
 
 		// Check the preferences!
@@ -219,22 +235,41 @@ public class Torch extends Activity {
 		// Get supported flash modes so we can work out what is possible.
 		List<String> pList = params.getSupportedFlashModes();
 
-		// Check if we can use the rear LED
+		// Check if the camera supports FLASH_MODE_TORCH
 		if (pList.contains(Parameters.FLASH_MODE_TORCH)) {
 			Log.d("FlashMode", "FLASH_MODE_TORCH available");
+			params.setFlashMode(Parameters.FLASH_MODE_OFF);
 			params.setFlashMode(Parameters.FLASH_MODE_TORCH);
-
 			// Save the parameters back to the camera and set a flag.
 			camera.setParameters(params);
+			camera.startPreview();
+			camera.autoFocus(new AutoFocusCallback(){
+				public void onAutoFocus(boolean success, Camera camera){
+				}
+			});
 			flashFlag = 1;
 			createNotification();
-
+			
+		// Otherwise, does it support FLASH_MODE_ON
+		} else if (pList.contains(Parameters.FLASH_MODE_ON)){
+			Log.d("FlashMode", "FLASH_MODE_ON available");
+			params.setFlashMode(Parameters.FLASH_MODE_OFF);
+			params.setFlashMode(Parameters.FLASH_MODE_ON);
+			// Save the parameters back to the camera and set a flag.
+			camera.setParameters(params);
+			camera.startPreview();
+			camera.autoFocus(new AutoFocusCallback(){
+				public void onAutoFocus(boolean success, Camera camera){
+				}
+			});
+			
+			flashFlag = 1;
+			createNotification();
 		} else {
-			// We shouldn't get here - but in case we do, call the frontFlash
-			// activity
-			Log.d("FlashMode", "FLASH_MODE_TORCH not available");
+			// We shouldn't get here, because of earlier checks - but in case we do,
+			// call the frontFlash activity
+			Log.d("FlashMode", "FLASH_MODE_TORCH and FLASH_MODE_ON not available");
 			flashScreen();
-
 		}
 	}
 
@@ -259,7 +294,6 @@ public class Torch extends Activity {
 		createNotification();
 	}
 
-	// Options menu handling
 
 	public void createNotification() {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
@@ -272,8 +306,7 @@ public class Torch extends Activity {
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotification = mBuilder.build();
 		// Make sure the notification only comes up once, and goes on click.
-		mNotification.flags |= Notification.FLAG_ONLY_ALERT_ONCE
-				| Notification.FLAG_AUTO_CANCEL;
+		mNotification.flags |= Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONGOING_EVENT;
 		// When we click the notification, make sure it comes back to a new
 		// intent of Torch, although it's only a single launch activity.
 		Intent notificationIntent = new Intent(this.getApplicationContext(),
