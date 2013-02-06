@@ -1,7 +1,6 @@
 package co.uk.jagw.andtorch;
 
 import java.util.List;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -22,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 //import com.millennialmedia.android.MMAdViewSDK;
 //import com.mopub.mobileads.MoPubView;
@@ -29,14 +29,17 @@ import android.widget.LinearLayout;
 public class Torch extends Activity {
 
 	// Create private variables
-	private Camera camera;
-	private int flashFlag = 0;
-	private int stickFlash = 0;
+	private Camera camera; // Main Camera used throughout the application
 	private Parameters params;
-	private boolean hasFlash;
+	
+	private boolean flashOn = false;
+	private boolean stickFlash = false; // Variable used to signal whether the flash should persist onPause
+	 
 	private LinearLayout layout;
 	public String tag;
 	public Notification mNotification;
+	public String flashMode;
+	private boolean hasFlash;
 
 	// ADVERTISING MoPub - create a private
 	// private MoPubView mAdView;
@@ -47,12 +50,12 @@ public class Torch extends Activity {
 		setContentView(R.layout.activity_torch);
 
 		// TODO: See if there's a custom background selected
-
 		// SharedPreferences sharedPref =
 		// PreferenceManager.getDefaultSharedPreferences(this);
 		// sharedPref.
 		// layout = (LinearLayout) findViewById(R.id.mainLayout);
 		// layout.setBackground(background);
+		
 
 		// // ADVERTISING
 		// // MoPub Code
@@ -61,15 +64,6 @@ public class Torch extends Activity {
 		// mAdView.loadAd();
 		// // Set the Millennial SDK to LOG_LEVEL_VERBOSE
 		// MMAdViewSDK.logLevel = MMAdViewSDK.LOG_LEVEL_VERBOSE;
-		
-		// Determine whether the phone has a camera with an LED
-		camera = Camera.open();
-		params = camera.getParameters();
-		if (checkIfFlash(params) == true) {
-			hasFlash = true;
-		} else {
-			hasFlash = false;
-		}
 
 	}
 
@@ -83,10 +77,14 @@ public class Torch extends Activity {
 	@Override
 	public void onPause() {
 
-		if (stickFlash == 0) {
+		if (stickFlash == false) {
+			// Let the camera go.
 			camera.release();
-		} else if (stickFlash == 1) {
-			// TODO: Warn the user that they cannot use other camera apps.
+		} else if (stickFlash == true) { 
+			Log.d("onPause", "onPause invoking, camera is NOT being released");
+			// Warn the user that Camera and similar apps may fail.
+			Toast toast = Toast.makeText(this, "AndTorch will remain on - other apps using the Camera may fail.", Toast.LENGTH_SHORT);
+			toast.show();
 		}
 
 		// Call the rest of the onPause
@@ -95,17 +93,12 @@ public class Torch extends Activity {
 
 	@Override
 	public void onResume() {
-	
-		if (stickFlash == 0) {
-			try {
-				camera = Camera.open();
-			} catch (Exception e) {
-				// TODO: this. If the stickFlash flag isn't set, but the camera
-				// is open, we get here.
-			}
-		} else {
-			// Fire a reminder to the user that the torch is STILL stuck on.
-		}
+
+		if (stickFlash == true) {
+			// Show notification that the torch is still on.
+			Toast toast = Toast.makeText(this, "AndTorch still active", Toast.LENGTH_SHORT);
+			toast.show();
+		} 
 
 		// Call the rest of the onResume method.
 		super.onResume();
@@ -113,7 +106,8 @@ public class Torch extends Activity {
 
 	@Override
 	public void onDestroy() {
-
+		
+		camera.release();
 		// ADVERTISING - Destroy the MoPub ad unit.
 		// mAdView.destroy();
 
@@ -125,71 +119,94 @@ public class Torch extends Activity {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		if(intent.getStringExtra("methodName").equals("toggleFlash")){
+			try {
+				camera.reconnect();
+			} catch (Exception e) {
+				// If we get here, either a camera doesn't exist, or it can't be reconnected to.
+				camera = Camera.open();
+			}
+			params = camera.getParameters();
 			flashOn(params);
 		}
 
 	}
-	
-	
 
-	//
+
+
+	// Method to check if the camera has the flash feature,
+	// Returns: True if it has a flash, false if it doesnt.
+	// Also sets main variable with the supported flash mode.
 	public boolean checkIfFlash(Parameters params) {
 		if (this.getPackageManager().hasSystemFeature(
 				PackageManager.FEATURE_CAMERA_FLASH)) {
 			Log.d("checkIfFlash", "It has flash!");
-			return true;
-		} else {
+
+			// Checking what type it has
 			List<String> pList = params.getSupportedFlashModes();
 			if (pList.contains(Parameters.FLASH_MODE_TORCH)) {
 				Log.d("checkIfFlash", "It has FLASH_MODE_TORCH!");
-				return true;
+				flashMode = "FLASH_MODE_TORCH";
+			} else if(pList.contains(Parameters.FLASH_MODE_ON)){
+				Log.d("checkIfFlash", "It has FLASH_MODE_ON");
+				flashMode = "FLASH_MODE_ON";
 			} else {
+				// We shouldn't get here!
+				Log.d("checkIfFlash", "It has flash, but no flash mode!");
 				return false;
-			}
+			} 		
 
+			return true;
+		} else {
+			// It has nothing - use front LCD screen.
+			return false;
 		}
+
 	}
-	
+
 	// Method to toggle to flash, logic check if flash is on.
-	public void toggleFlash(View view) {
-		
-
-		
+	public void toggleFlash(View view){
 		Log.d("toggleFlash", "Got to toggleFlash method");
-
-		// Check the preferences!
+		
+		// Get the preferences from the application.
 		SharedPreferences sharedPref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		Boolean screenPref = sharedPref.getBoolean("pref_screenflash", false);
-
-		if (hasFlash == true & screenPref == false) {
-			// If there's no open camera unit; let's open one!
-			if (camera == null) {
-				try {
-					camera = Camera.open();
-				} catch (Exception e) {
-					// TODO: If we aren't able to open the camera, we should try
-					// and use the screen.
-				}
+		
+		if(camera == null){
+			try {
+				camera = Camera.open();
+				
+			} catch(Exception e){
+				// Camera cannot be opened.
+				Toast toast = Toast.makeText(this, "Camera cannot be opened, screen will be used instead", Toast.LENGTH_SHORT);
+				toast.show();
+				hasFlash = false;
 			}
-
-			// Remove the sticky toggle if we've hit the first button.
-			stickFlash = 0;
-
-			if (flashFlag == 0) {
+		}
+		
+		if(params == null ){	
+			params = camera.getParameters();
+		}
+		
+		hasFlash = checkIfFlash(params);
+		
+		// Check for flash, and check for overwriting preference 'Use Screen Flash'
+		if (hasFlash == true & screenPref == false) {
+			
+			// If the flash isn't on; turn it on!
+			if (flashOn == false) {
 				try {
 					camera.reconnect();
 				} catch (Exception e) {
 					// Do nothing - camera is already connected
 				}
-
 				params = camera.getParameters();
 				flashOn(params);
-
-			} else if (flashFlag == 1) {
+				
+				// If the flash is on, turn it off.
+			} else if(flashOn == true) {
 				params = camera.getParameters();
 				flashOff(params);
-
 			}
 		} else {
 			// The device doesn't have a flash, or the user wants to use the
@@ -209,7 +226,7 @@ public class Torch extends Activity {
 			}
 		}
 
-		if (flashFlag == 0) {
+		if (flashOn == false) {
 			try {
 				camera.reconnect();
 			} catch (Exception e) {
@@ -218,12 +235,12 @@ public class Torch extends Activity {
 
 			params = camera.getParameters();
 			flashOn(params);
-			stickFlash = 1;
+			stickFlash = true;
 
-		} else if (flashFlag == 1) {
+		} else if (flashOn == true) {
 			params = camera.getParameters();
 			flashOff(params);
-			stickFlash = 0;
+			stickFlash = false;
 
 		}
 
@@ -247,10 +264,10 @@ public class Torch extends Activity {
 				public void onAutoFocus(boolean success, Camera camera){
 				}
 			});
-			flashFlag = 1;
+			flashOn = true;
 			createNotification();
-			
-		// Otherwise, does it support FLASH_MODE_ON
+
+			// Otherwise, does it support FLASH_MODE_ON
 		} else if (pList.contains(Parameters.FLASH_MODE_ON)){
 			Log.d("FlashMode", "FLASH_MODE_ON available");
 			params.setFlashMode(Parameters.FLASH_MODE_OFF);
@@ -262,8 +279,8 @@ public class Torch extends Activity {
 				public void onAutoFocus(boolean success, Camera camera){
 				}
 			});
-			
-			flashFlag = 1;
+
+			flashOn = true;
 			createNotification();
 		} else {
 			// We shouldn't get here, because of earlier checks - but in case we do,
@@ -277,24 +294,25 @@ public class Torch extends Activity {
 	public void flashOff(Parameters params) {
 		params.setFlashMode(Parameters.FLASH_MODE_OFF);
 		camera.setParameters(params);
-		flashFlag = 0;
+		flashOn = false;
 
 		// Give the camera back to the OS.
 		camera.unlock();
+		
 
 	}
 
-	// Method to make the current background white and turn brightness to
-	// maximum.
+	
+	// Method to make the current background white and turn brightness to maximum.
 	// Turning the front screen into a flashlight instead!
-
 	public void flashScreen() {
 		Intent helpIntent = new Intent(Torch.this, FrontFlash.class);
 		Torch.this.startActivity(helpIntent);
 		createNotification();
 	}
 
-
+	
+	// Method for creating a Push Notification
 	public void createNotification() {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this).setSmallIcon(R.drawable.ic_launcher)
