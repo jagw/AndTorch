@@ -1,6 +1,7 @@
 package co.uk.jagw.andtorch;
 
 import java.util.List;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -20,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //import com.millennialmedia.android.MMAdViewSDK;
@@ -35,7 +35,6 @@ public class Torch extends Activity {
 	private boolean flashOn = false;
 	private boolean stickFlash = false; // Variable used to signal whether the flash should persist onPause
 	 
-	private LinearLayout layout;
 	public String tag;
 	public Notification mNotification;
 	public String flashMode;
@@ -79,7 +78,11 @@ public class Torch extends Activity {
 
 		if (stickFlash == false) {
 			// Let the camera go.
-			camera.release();
+			try{
+				camera.release();
+			} catch(Exception e){
+				// If there's no camera, that's OK. Let it go!
+			}
 		} else if (stickFlash == true) { 
 			Log.d("onPause", "onPause invoking, camera is NOT being released");
 			// Warn the user that Camera and similar apps may fail.
@@ -107,7 +110,16 @@ public class Torch extends Activity {
 	@Override
 	public void onDestroy() {
 		
-		camera.release();
+		if(camera != null){
+			camera.release();
+		}
+				
+		// If there's a notification when the app is destroyed, kill it too.
+		if(mNotification != null){
+			NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.cancel(1);
+		}
+		
 		// ADVERTISING - Destroy the MoPub ad unit.
 		// mAdView.destroy();
 
@@ -163,7 +175,7 @@ public class Torch extends Activity {
 
 	}
 
-	// Method to toggle to flash, logic check if flash is on.
+	// Method to toggle flash. Contains a logic check for whether the flash is on or not.
 	public void toggleFlash(View view){
 		Log.d("toggleFlash", "Got to toggleFlash method");
 		
@@ -172,6 +184,7 @@ public class Torch extends Activity {
 				.getDefaultSharedPreferences(this);
 		Boolean screenPref = sharedPref.getBoolean("pref_screenflash", false);
 		
+		// If there's no camera object open, open one.
 		if(camera == null){
 			try {
 				camera = Camera.open();
@@ -184,10 +197,16 @@ public class Torch extends Activity {
 			}
 		}
 		
-		if(params == null ){	
-			params = camera.getParameters();
-		}
 		
+		// If there is no Parameters set, obtain them.
+		if(params == null ){	
+			try{
+				params = camera.getParameters();
+			} catch (Exception e){
+				// It's possible we get here, if so; let's carry on!
+			}
+		}
+		// Check we've got flash available.
 		hasFlash = checkIfFlash(params);
 		
 		// Check for flash, and check for overwriting preference 'Use Screen Flash'
@@ -209,40 +228,50 @@ public class Torch extends Activity {
 				flashOff(params);
 			}
 		} else {
-			// The device doesn't have a flash, or the user wants to use the
-			// screen
+			// The device doesn't have a flash, or the user has set Use Screen Flash.
 			flashScreen();
 		}
 	}
 
 	public void stickFlash(View view) {
 		Log.d("stickFlash", "Got to stickFlash method");
-
-		if (camera == null) {
-			try {
-				camera = Camera.open();
-			} catch (Exception e) {
-				// TODO: If we can't open the camera.
-			}
-		}
-
-		if (flashOn == false) {
-			try {
-				camera.reconnect();
-			} catch (Exception e) {
-				// Do nothing - camera is already connected
-			}
-
-			params = camera.getParameters();
-			flashOn(params);
+		
+		if(flashOn == false){
 			stickFlash = true;
-
-		} else if (flashOn == true) {
-			params = camera.getParameters();
-			flashOff(params);
+		} else if (flashOn == true){
 			stickFlash = false;
-
 		}
+		
+		toggleFlash(view);
+
+//		if (camera == null) {
+//			try {
+//				camera = Camera.open();
+//			} catch (Exception e) {
+//				Toast toast = Toast.makeText(this, "Torch cannot be opened - screen will be used instead", Toast.LENGTH_SHORT);
+//				toast.show();
+//				
+//				flashScreen();
+//			}
+//		}
+//		
+//		if (flashOn == false) {
+//			try {
+//				camera.reconnect();
+//			} catch (Exception e) {
+//				// Do nothing - camera is already connected
+//			}
+//
+//			params = camera.getParameters();
+//			flashOn(params);
+//			stickFlash = true;
+//
+//		} else if (flashOn == true) {
+//			params = camera.getParameters();
+//			flashOff(params);
+//			stickFlash = false;
+//
+//		}
 
 	}
 
