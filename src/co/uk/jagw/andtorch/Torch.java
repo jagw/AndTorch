@@ -85,6 +85,7 @@ public class Torch extends Activity {
 			}
 		} else if (stickFlash == true) { 
 			Log.d("onPause", "onPause invoking, camera is NOT being released");
+			createNotification();
 			// Warn the user that Camera and similar apps may fail.
 			Toast toast = Toast.makeText(this, "AndTorch will remain on - other apps using the Camera may fail.", Toast.LENGTH_SHORT);
 			toast.show();
@@ -102,6 +103,12 @@ public class Torch extends Activity {
 			Toast toast = Toast.makeText(this, "AndTorch still active", Toast.LENGTH_SHORT);
 			toast.show();
 		} 
+		
+		// If we have a notification, stop it!
+		if(mNotification != null){
+			NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.cancel(1);
+		}
 
 		// Call the rest of the onResume method.
 		super.onResume();
@@ -130,15 +137,19 @@ public class Torch extends Activity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		if(intent.getStringExtra("methodName").equals("toggleFlash")){
-			try {
-				camera.reconnect();
-			} catch (Exception e) {
-				// If we get here, either a camera doesn't exist, or it can't be reconnected to.
-				camera = Camera.open();
+		try{
+			if(intent.getStringExtra("methodName").equals("toggleFlash")){
+				try {
+					camera.reconnect();
+				} catch (Exception e) {
+					// If we get here, either a camera doesn't exist, or it can't be reconnected to.
+					camera = Camera.open();
+				}
+				params = camera.getParameters();
+				flashOn(params);
 			}
-			params = camera.getParameters();
-			flashOn(params);
+		} catch(Exception e){
+				// TODO: figure out what we do here!
 		}
 
 	}
@@ -294,7 +305,6 @@ public class Torch extends Activity {
 				}
 			});
 			flashOn = true;
-			createNotification();
 
 			// Otherwise, does it support FLASH_MODE_ON
 		} else if (pList.contains(Parameters.FLASH_MODE_ON)){
@@ -310,7 +320,6 @@ public class Torch extends Activity {
 			});
 
 			flashOn = true;
-			createNotification();
 		} else {
 			// We shouldn't get here, because of earlier checks - but in case we do,
 			// call the frontFlash activity
