@@ -12,20 +12,22 @@
       android:background="@drawable/torch">
       
     <Button
+        android:id="@+id/regularFlash"
         android:layout_marginTop="170dp"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:onClick="toggleFlash"
-        android:text="@string/toggle_torch" />
+        android:onClick="regularFlash" />
+        <!-- android:text="@string/toggle_torch" /> -->
     
     <Button
+        android:id="@+id/stickFlash"
         android:layout_marginTop="225dp"
         android:layout_centerHorizontal="true"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:onClick="stickFlash"
-        android:text="@string/toggle_sticky" />
+        android:onClick="stickFlash" />
+        <!-- android:text="@string/toggle_sticky" /> -->
         
 <!--     <com.mopub.mobileads.MoPubView -->
 <!--     	android:id="@+id/adview" -->

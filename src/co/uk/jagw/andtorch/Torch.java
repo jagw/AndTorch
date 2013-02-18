@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 //import com.millennialmedia.android.MMAdViewSDK;
@@ -47,7 +49,14 @@ public class Torch extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_torch);
-
+		
+		// Make buttons invisible
+		Button regularFlash = (Button)findViewById(R.id.regularFlash);
+		Button stickFlash = (Button)findViewById(R.id.stickFlash);
+		
+		regularFlash.setBackgroundColor(Color.TRANSPARENT);
+		stickFlash.setBackgroundColor(Color.TRANSPARENT);
+		
 		// TODO: See if there's a custom background selected
 		// SharedPreferences sharedPref =
 		// PreferenceManager.getDefaultSharedPreferences(this);
@@ -82,6 +91,7 @@ public class Torch extends Activity {
 				camera.release();
 			} catch(Exception e){
 				// If there's no camera, that's OK. Let it go!
+				resetApp();
 			}
 		} else if (stickFlash == true) { 
 			Log.d("onPause", "onPause invoking, camera is NOT being released");
@@ -102,7 +112,9 @@ public class Torch extends Activity {
 			// Show notification that the torch is still on.
 			Toast toast = Toast.makeText(this, "AndTorch still active", Toast.LENGTH_SHORT);
 			toast.show();
-		} 
+		} else if (stickFlash == false){
+			resetApp();
+		}
 		
 		// If we have a notification, stop it!
 		if(mNotification != null){
@@ -235,13 +247,26 @@ public class Torch extends Activity {
 				
 				// If the flash is on, turn it off.
 			} else if(flashOn == true) {
-				params = camera.getParameters();
+				try{
+					camera.reconnect();
+					params = camera.getParameters();
+				} catch(Exception e){
+					
+				}
 				flashOff(params);
 			}
 		} else {
 			// The device doesn't have a flash, or the user has set Use Screen Flash.
 			flashScreen();
 		}
+	}
+	
+	public void regularFlash(View view){
+		Log.d("regularFlash", "Got to regularFlash method");
+		
+		stickFlash = false;
+		
+		toggleFlash(view);
 	}
 
 	public void stickFlash(View view) {
@@ -349,6 +374,12 @@ public class Torch extends Activity {
 		createNotification();
 	}
 
+	// Resets things when we need to!
+	public void resetApp(){
+		camera = null;
+		params = null;
+		flashOn = false;
+	}
 	
 	// Method for creating a Push Notification
 	public void createNotification() {
