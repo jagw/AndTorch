@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 //import com.millennialmedia.android.MMAdViewSDK;
@@ -41,6 +42,7 @@ public class Torch extends Activity {
 	public Notification mNotification;
 	public String flashMode;
 	private boolean hasFlash;
+	private RelativeLayout relativeLayout;
 
 	// ADVERTISING MoPub - create a private
 	// private MoPubView mAdView;
@@ -56,6 +58,9 @@ public class Torch extends Activity {
 		
 		regularFlash.setBackgroundColor(Color.TRANSPARENT);
 		stickFlash.setBackgroundColor(Color.TRANSPARENT);
+		
+		relativeLayout = (RelativeLayout) findViewById(R.id.mainView);
+
 		
 		// TODO: See if there's a custom background selected
 		// SharedPreferences sharedPref =
@@ -175,22 +180,27 @@ public class Torch extends Activity {
 		if (this.getPackageManager().hasSystemFeature(
 				PackageManager.FEATURE_CAMERA_FLASH)) {
 			Log.d("checkIfFlash", "It has flash!");
+			try{
+				// Checking what type it has
+				List<String> pList = params.getSupportedFlashModes();
 
-			// Checking what type it has
-			List<String> pList = params.getSupportedFlashModes();
-			if (pList.contains(Parameters.FLASH_MODE_TORCH)) {
-				Log.d("checkIfFlash", "It has FLASH_MODE_TORCH!");
-				flashMode = "FLASH_MODE_TORCH";
-			} else if(pList.contains(Parameters.FLASH_MODE_ON)){
-				Log.d("checkIfFlash", "It has FLASH_MODE_ON");
-				flashMode = "FLASH_MODE_ON";
-			} else {
-				// We shouldn't get here!
-				Log.d("checkIfFlash", "It has flash, but no flash mode!");
-				return false;
-			} 		
+				if (pList.contains(Parameters.FLASH_MODE_TORCH)) {
+					Log.d("checkIfFlash", "It has FLASH_MODE_TORCH!");
+					flashMode = "FLASH_MODE_TORCH";
+				} else if(pList.contains(Parameters.FLASH_MODE_ON)){
+					Log.d("checkIfFlash", "It has FLASH_MODE_ON");
+					flashMode = "FLASH_MODE_ON";
+				} else {
+					// We shouldn't get here!
+					Log.d("checkIfFlash", "It has flash, but no flash mode!");
+					return false;
+				} 		
 
-			return true;
+				return true;
+			} catch(Exception e){
+				// It does have flash, but we can't tell which type.
+				return true;
+			}
 		} else {
 			// It has nothing - use front LCD screen.
 			return false;
@@ -330,6 +340,7 @@ public class Torch extends Activity {
 				}
 			});
 			flashOn = true;
+			relativeLayout.setBackgroundResource(R.drawable.torch_on);
 
 			// Otherwise, does it support FLASH_MODE_ON
 		} else if (pList.contains(Parameters.FLASH_MODE_ON)){
@@ -358,6 +369,7 @@ public class Torch extends Activity {
 		params.setFlashMode(Parameters.FLASH_MODE_OFF);
 		camera.setParameters(params);
 		flashOn = false;
+		relativeLayout.setBackgroundResource(R.drawable.torch);
 
 		// Give the camera back to the OS.
 		camera.unlock();

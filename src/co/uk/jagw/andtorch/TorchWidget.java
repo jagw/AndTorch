@@ -11,6 +11,8 @@ public class TorchWidget extends AppWidgetProvider{
 	
 	//TODO: implement widget functionality
 	
+	//TODO: Fix IllegalStateExceptions
+	
 	
 	// This onUpdate just opens the Torch activity, and triggers the onNewIntent() method
 	@Override
