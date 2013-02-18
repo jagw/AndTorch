@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about">AndTorch \nDeveloped by Jagw Apps. \n\nThank you for downloading! \nAny questions, or comments, please contact jagw@jagw.co.uk</string>
+    <string name="title">AndTorch \n</string>
+    <string name="credit">Developed by Jagw Apps. \n</string>
+    <string name="about">Thank you for downloading! \nAny questions, or comments, please contact jagw@jagw.co.uk \n</string>
     <string name="about_emailButton">Send Email</string>
+    <string name="debug">Please report any crashes by sending an email, detailing your handset, OS version and any problems you are having! We welcome your feedback, and will aim to fix any bugs you find in the next release!</string>
+    <string name="about_viewAppStore">View AndTorch in Google Play</string>
+    <string name="about_viewOtherApps">View Other Apps</string>
+    <string name="help_help1">\'Help! The app crashes\' - please email me at jagw@jagw.co.uk with any problems, detailing your device, OS version and how it happened. We will do our best to fix any problems as soon as possible!</string>
     
 </resources>

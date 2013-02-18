@@ -24,6 +24,8 @@ public class Help extends Activity {
 		emailIntent.setType("plain/text");
 		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"andtorch@jagw.co.uk"});
 		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "AndTorch: User Help Required");
+		String str = "Model " + android.os.Build.MODEL + " | Manufacturer " + android.os.Build.MANUFACTURER + " | Version " + android.os.Build.VERSION.RELEASE;
+		emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, str);
 
 		/* Send it off to the Activity-Chooser */
 		this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));

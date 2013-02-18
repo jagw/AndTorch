@@ -2,6 +2,7 @@ package co.uk.jagw.andtorch;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +37,18 @@ public class About extends Activity{
 		this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 	}
 
+	public void viewAppStore(View view){
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse("market://details?id=co.uk.jagw.andtorch"));
+		startActivity(intent);
+	}
+	
+	public void viewOtherApps(View view){
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse("market://search?q=pub:co.uk.jagw"));
+		startActivity(intent);
+	}
+	
 	// Options menu handling
 
 	@Override
