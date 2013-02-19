@@ -105,6 +105,13 @@ public class Torch extends Activity {
 			Toast toast = Toast.makeText(this, "AndTorch will remain on - other apps using the Camera may fail.", Toast.LENGTH_SHORT);
 			toast.show();
 		}
+		
+		// Make sure the graphics line up before we leave.
+		if (flashOn == false){
+			relativeLayout.setBackgroundResource(R.drawable.torch);
+		} else if (flashOn == true){
+			relativeLayout.setBackgroundResource(R.drawable.torch_on);
+		}
 
 		// Call the rest of the onPause
 		super.onPause();
@@ -125,6 +132,13 @@ public class Torch extends Activity {
 		if(mNotification != null){
 			NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.cancel(1);
+		}
+		
+		// Make sure the graphics line up when we come back.
+		if (flashOn == false){
+			relativeLayout.setBackgroundResource(R.drawable.torch);
+		} else if (flashOn == true){
+			relativeLayout.setBackgroundResource(R.drawable.torch_on);
 		}
 
 		// Call the rest of the onResume method.
