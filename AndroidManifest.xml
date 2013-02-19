@@ -49,16 +49,16 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             />
         
-       	<receiver android:name="TorchWidget" >
+<!--       	<receiver android:name="TorchWidget" >
    			<intent-filter>
       				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
    			</intent-filter>
    			<meta-data android:name="android.appwidget.provider"
            			   android:resource="@xml/andtorch_appwidget_info" />
-		</receiver>
+		</receiver> -->
 
        	
-<!--         <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation"/> -->
+<!--        <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation"/> -->
 <!-- 		<activity android:name="com.mopub.mobileads.MraidActivity" android:configChanges="keyboardHidden|orientation"/> -->
 <!-- 		<activity android:name="com.mopub.mobileads.MraidBrowser" android:configChanges="keyboardHidden|orientation"/> -->
 <!-- 		<activity android:name="com.millennialmedia.android.MMActivity" -->
