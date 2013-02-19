@@ -9,14 +9,15 @@
       android:id="@+id/mainView"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@drawable/torch">
+      android:background="@drawable/torch_no_buttons">
       
     <Button
         android:id="@+id/regularFlash"
-        android:layout_marginTop="170dp"
-        android:layout_width="50dp"
+        android:layout_marginTop="170dip"
+        android:layout_width="32dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/torch_on_button"
         android:onClick="regularFlash" />
         <!-- android:text="@string/toggle_torch" /> -->
     
@@ -24,8 +25,9 @@
         android:id="@+id/stickFlash"
         android:layout_marginTop="225dp"
         android:layout_centerHorizontal="true"
-        android:layout_width="50dp"
+        android:layout_width="32dp"
         android:layout_height="50dp"
+        android:background="@drawable/torch_lock_button"
         android:onClick="stickFlash" />
         <!-- android:text="@string/toggle_sticky" /> -->
         

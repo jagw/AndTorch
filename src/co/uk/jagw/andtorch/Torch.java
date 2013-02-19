@@ -56,8 +56,8 @@ public class Torch extends Activity {
 		Button regularFlash = (Button)findViewById(R.id.regularFlash);
 		Button stickFlash = (Button)findViewById(R.id.stickFlash);
 		
-		regularFlash.setBackgroundColor(Color.TRANSPARENT);
-		stickFlash.setBackgroundColor(Color.TRANSPARENT);
+		//regularFlash.setBackgroundColor(Color.TRANSPARENT);
+		//stickFlash.setBackgroundColor(Color.TRANSPARENT);
 		
 		relativeLayout = (RelativeLayout) findViewById(R.id.mainView);
 
@@ -340,7 +340,7 @@ public class Torch extends Activity {
 				}
 			});
 			flashOn = true;
-			relativeLayout.setBackgroundResource(R.drawable.torch_on);
+			relativeLayout.setBackgroundResource(R.drawable.torch_on_nobuttons);
 
 			// Otherwise, does it support FLASH_MODE_ON
 		} else if (pList.contains(Parameters.FLASH_MODE_ON)){
@@ -369,7 +369,7 @@ public class Torch extends Activity {
 		params.setFlashMode(Parameters.FLASH_MODE_OFF);
 		camera.setParameters(params);
 		flashOn = false;
-		relativeLayout.setBackgroundResource(R.drawable.torch);
+		relativeLayout.setBackgroundResource(R.drawable.torch_no_buttons);
 
 		// Give the camera back to the OS.
 		camera.unlock();
