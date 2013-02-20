@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
@@ -26,8 +25,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-//import com.millennialmedia.android.MMAdViewSDK;
-//import com.mopub.mobileads.MoPubView;
+import com.mopub.mobileads.MoPubView;
 
 public class Torch extends Activity {
 
@@ -45,7 +43,7 @@ public class Torch extends Activity {
 	private RelativeLayout relativeLayout;
 
 	// ADVERTISING MoPub - create a private
-	// private MoPubView mAdView;
+	private MoPubView mAdView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +68,11 @@ public class Torch extends Activity {
 		// layout.setBackground(background);
 		
 
-		// // ADVERTISING
-		// // MoPub Code
-		// mAdView = (MoPubView) findViewById(R.id.adview);
-		// mAdView.setAdUnitId("aa8476646a2a11e281c11231392559e4");
-		// mAdView.loadAd();
+		// ADVERTISING
+		// MoPub Code
+		mAdView = (MoPubView) findViewById(R.id.adview);
+		mAdView.setAdUnitId("aa8476646a2a11e281c11231392559e4");
+		mAdView.loadAd();
 		// // Set the Millennial SDK to LOG_LEVEL_VERBOSE
 		// MMAdViewSDK.logLevel = MMAdViewSDK.LOG_LEVEL_VERBOSE;
 
@@ -108,9 +106,9 @@ public class Torch extends Activity {
 		
 		// Make sure the graphics line up before we leave.
 		if (flashOn == false){
-			relativeLayout.setBackgroundResource(R.drawable.torch);
+			relativeLayout.setBackgroundResource(R.drawable.torch_no_buttons);
 		} else if (flashOn == true){
-			relativeLayout.setBackgroundResource(R.drawable.torch_on);
+			relativeLayout.setBackgroundResource(R.drawable.torch_on_nobuttons);
 		}
 
 		// Call the rest of the onPause
@@ -136,9 +134,9 @@ public class Torch extends Activity {
 		
 		// Make sure the graphics line up when we come back.
 		if (flashOn == false){
-			relativeLayout.setBackgroundResource(R.drawable.torch);
+			relativeLayout.setBackgroundResource(R.drawable.torch_no_buttons);
 		} else if (flashOn == true){
-			relativeLayout.setBackgroundResource(R.drawable.torch_on);
+			relativeLayout.setBackgroundResource(R.drawable.torch_on_nobuttons);
 		}
 
 		// Call the rest of the onResume method.
@@ -159,7 +157,7 @@ public class Torch extends Activity {
 		}
 		
 		// ADVERTISING - Destroy the MoPub ad unit.
-		// mAdView.destroy();
+	    mAdView.destroy();
 
 		super.onDestroy();
 	}
