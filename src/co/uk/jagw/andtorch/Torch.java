@@ -1,4 +1,4 @@
-package co.uk.jagw.andtorch;
+	package co.uk.jagw.andtorch;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -27,7 +28,7 @@ import android.widget.Toast;
 
 import com.mopub.mobileads.MoPubView;
 
-public class Torch extends Activity {
+public class Torch extends Activity implements SurfaceHolder.Callback {
 
 	// Create private variables
 	private Camera camera; // Main Camera used throughout the application
@@ -347,10 +348,15 @@ public class Torch extends Activity {
 			// Save the parameters back to the camera and set a flag.
 			camera.setParameters(params);
 			camera.startPreview();
-			camera.autoFocus(new AutoFocusCallback(){
-				public void onAutoFocus(boolean success, Camera camera){
-				}
-			});
+			
+			// If the camera has Autofocus, set it off - this helps get the flash on.
+			Log.d("FocusMode", params.getFocusMode());
+//			if(pList.contains(Parameters.FOCUS_MODE_AUTO)){
+//				camera.autoFocus(new AutoFocusCallback(){
+//					public void onAutoFocus(boolean success, Camera camera){
+//					}
+//				});
+//			}
 			flashOn = true;
 			relativeLayout.setBackgroundResource(R.drawable.torch_on_nobuttons);
 
@@ -362,10 +368,14 @@ public class Torch extends Activity {
 			// Save the parameters back to the camera and set a flag.
 			camera.setParameters(params);
 			camera.startPreview();
-			camera.autoFocus(new AutoFocusCallback(){
-				public void onAutoFocus(boolean success, Camera camera){
-				}
-			});
+			// If the camera has Autofocus, set it off - this helps get the flash on.
+			Log.d("FocusMode", params.getFocusMode());
+ //			if(pList.contains(Parameters.FOCUS_MODE_AUTO)){				
+//						camera.autoFocus(new AutoFocusCallback(){
+//							public void onAutoFocus(boolean success, Camera camera){
+//							}
+//						});
+//					}
 
 			flashOn = true;
 		} else {
@@ -452,6 +462,29 @@ public class Torch extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("SurfaceCreatedCallback", "i'm here");
+		camera.autoFocus(new AutoFocusCallback(){
+			public void onAutoFocus(boolean success, Camera camera){
+			}
+		});
+		
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

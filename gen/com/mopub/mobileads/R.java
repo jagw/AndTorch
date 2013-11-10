@@ -7,36 +7,36 @@
 package com.mopub.mobileads;
 
 public final class R {
-	public static final class raw {
-		public static final int mraid = 0x7f050000;
-	}
-	public static final class id {
-		public static final int progress_indicator = 0x7f060014;
-		public static final int placeholder_view_id = 0x7f060000;
-		public static final int browserBackButton = 0x7f06000f;
-		public static final int ad_container_layout_id = 0x7f060002;
-		public static final int browserCloseButton = 0x7f060012;
-		public static final int browserRefreshButton = 0x7f060011;
-		public static final int modal_container_layout_id = 0x7f060001;
-		public static final int browserForwardButton = 0x7f060010;
-		public static final int linearLayout1 = 0x7f06000e;
-		public static final int webView = 0x7f060013;
-		public static final int relativeLayout1 = 0x7f06000d;
-	}
-	public static final class layout {
-		public static final int video_loading_progress = 0x7f030006;
-		public static final int mraid_browser = 0x7f030005;
-	}
 	public static final class drawable {
-		public static final int rightarrow = 0x7f020008;
-		public static final int close_button_pressed = 0x7f020003;
-		public static final int unrightarrow = 0x7f020010;
-		public static final int close_button_normal = 0x7f020002;
-		public static final int unleftarrow = 0x7f02000f;
 		public static final int bkgrnd = 0x7f020000;
-		public static final int refresh = 0x7f020007;
 		public static final int close = 0x7f020001;
+		public static final int close_button_normal = 0x7f020002;
+		public static final int close_button_pressed = 0x7f020003;
 		public static final int default_video_poster = 0x7f020004;
 		public static final int leftarrow = 0x7f020006;
+		public static final int refresh = 0x7f020007;
+		public static final int rightarrow = 0x7f020008;
+		public static final int unleftarrow = 0x7f02000f;
+		public static final int unrightarrow = 0x7f020010;
+	}
+	public static final class id {
+		public static final int ad_container_layout_id = 0x7f060002;
+		public static final int browserBackButton = 0x7f06000f;
+		public static final int browserCloseButton = 0x7f060012;
+		public static final int browserForwardButton = 0x7f060010;
+		public static final int browserRefreshButton = 0x7f060011;
+		public static final int linearLayout1 = 0x7f06000e;
+		public static final int modal_container_layout_id = 0x7f060001;
+		public static final int placeholder_view_id = 0x7f060000;
+		public static final int progress_indicator = 0x7f060014;
+		public static final int relativeLayout1 = 0x7f06000d;
+		public static final int webView = 0x7f060013;
+	}
+	public static final class layout {
+		public static final int mraid_browser = 0x7f030005;
+		public static final int video_loading_progress = 0x7f030006;
+	}
+	public static final class raw {
+		public static final int mraid = 0x7f050000;
 	}
 }
